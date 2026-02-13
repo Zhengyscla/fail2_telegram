@@ -51,12 +51,5 @@ systemctl staatus fail2ban-notify.service  # 验证服务正常运行
 <img width="322" height="93" alt="image" src="https://github.com/user-attachments/assets/04e1a1bf-7ce9-499c-8812-0c6b75f2687a" />
 
 
-##目前问题
-
-重启 fail2ban 服务恢复封IP后，计划应该只提示以下类似的消息：
-
-<img width="411" height="50" alt="image" src="https://github.com/user-attachments/assets/97f984f6-2569-45fa-afc6-106ad250f6da" />
-
-实际上会轮流通知恢复封禁IP的消息
 
 # 项目佛系维护，不接受 issus 以及 bug 反馈。项目若有问题，自行解决
