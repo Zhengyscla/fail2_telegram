@@ -48,8 +48,7 @@ systemctl staatus fail2ban-notify.service  # 验证服务正常运行
 
 效果图：
 
-<img width="322" height="93" alt="image" src="https://github.com/user-attachments/assets/04e1a1bf-7ce9-499c-8812-0c6b75f2687a" />
-
+<img width="446" height="366" alt="image" src="https://github.com/user-attachments/assets/edfa2ff5-a557-47dc-a00b-f41c7ba94c19" />
 
 
 # 项目佛系维护，不接受 issus 以及 bug 反馈。项目若有问题，自行解决
