@@ -12,9 +12,9 @@ Fail2ban notify 基于 [fail2ban](https://github.com/fail2ban/fail2ban) 项目�
 
 ```bash
 cd /etc/systemd/system/
-wget https://raw.githubusercontent.com/Zhengyscla/fail2_telegram/refs/heads/master/fail2ban-notify.service
+wget https://raw.githubusercontent.com/Zhengyscla/fail2_telegram/refs/heads/main/fail2ban-notify.service
 cd /usr/local/bin/
-wget https://raw.githubusercontent.com/Zhengyscla/fail2_telegram/refs/heads/master/fail2ban-telegram-notify.sh
+wget https://raw.githubusercontent.com/Zhengyscla/fail2_telegram/refs/heads/main/fail2ban-telegram-notify.sh
 ```
 
 ## 写入配置
