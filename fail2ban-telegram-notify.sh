@@ -9,6 +9,8 @@ LOGFILE="/var/log/fail2ban.log"
 RESTORE_WAIT=10
 BAN_WINDOW=30
 BAN_THRESHOLD=5
+BAN_ACTIVE=0
+STOPPING=0
 
 CACHE_FILE="/tmp/f2b_country_cache.db"
 RESTORE_FILE="/tmp/f2b_restore.tmp"
@@ -55,33 +57,37 @@ Restored ${COUNT} bans on ${HOSTNAME}"
 }
 
 ### ========= Ban 聚合 =========
-flush_ban_summary() {
+flush_ban_window() {
     COUNT=$(wc -l < "$BAN_FILE" 2>/dev/null)
 
     if [ "$COUNT" -ge "$BAN_THRESHOLD" ]; then
         send_msg "⚠ *High Attack Activity*
 ${COUNT} bans in last ${BAN_WINDOW}s on ${HOSTNAME}"
-        rm -f "$BAN_FILE"
     fi
+
+    rm -f "$BAN_FILE"
+    BAN_ACTIVE=0
 }
 
-start_ban_timer() {
+start_ban_window() {
+    BAN_ACTIVE=1
     (
         sleep "$BAN_WINDOW"
-        flush_ban_summary
+        flush_ban_window
     ) &
 }
 
-### ========= 主监听 =========
 tail -F "$LOGFILE" | while read -r line; do
 
     case "$line" in
 
         *"Starting Fail2ban"*)
+            STOPPING=0
             send_msg "🟢 *Fail2Ban Started* on ${HOSTNAME}"
             ;;
 
         *"Exiting Fail2ban"*)
+            STOPPING=1
             send_msg "🔴 *Fail2Ban Stopped* on ${HOSTNAME}"
             ;;
 
@@ -100,6 +106,10 @@ tail -F "$LOGFILE" | while read -r line; do
             ;;
 
         *"NOTICE"*Unban*)
+            if [ "$STOPPING" -eq 1 ]; then
+                continue
+            fi
+
             IP=$(echo "$line" | awk '{print $NF}')
             COUNTRY=$(get_country "$IP")
 
@@ -110,7 +120,6 @@ Host: ${HOSTNAME}"
             ;;
 
         *"NOTICE"*Ban*)
-            # 排除 Restore
             if echo "$line" | grep -q "Restore"; then
                 continue
             fi
@@ -120,13 +129,12 @@ Host: ${HOSTNAME}"
 
             echo "$IP" >> "$BAN_FILE"
 
-            COUNT=$(wc -l < "$BAN_FILE")
-
-            if [ "$COUNT" -eq 1 ]; then
-                start_ban_timer
+            if [ "$BAN_ACTIVE" -eq 0 ]; then
+                start_ban_window
             fi
 
-            # 低频攻击 → 单条发送
+            COUNT=$(wc -l < "$BAN_FILE")
+
             if [ "$COUNT" -lt "$BAN_THRESHOLD" ]; then
                 send_msg "🚫 *Ban*
 IP: \`${IP}\`
