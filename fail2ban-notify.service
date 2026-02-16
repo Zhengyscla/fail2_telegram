@@ -1,14 +1,14 @@
 [Unit]
-Description=Fail2Ban Ban Telegram Notifier
+Description=Fail2Ban Telegram Notifier
 After=network.target fail2ban.service
 
 [Service]
-Type=simple
-ExecStart=/usr/local/bin/fail2ban-telegram-notify.sh
+ExecStart=/usr/bin/python3 /usr/local/bin/tele_fail2_notify.py
+WorkingDirectory=/usr/local/bin
 Restart=always
-RestartSec=10
-StandardOutput=journal
-StandardError=journal
+User=root
+StandardOutput=append:/var/log/tele_fail2_notify.log
+StandardError=append:/var/log/tele_fail2_notify.log
 
 [Install]
 WantedBy=multi-user.target
