@@ -85,19 +85,32 @@ def monitor_log():
 
         # ─── 优先处理 Ban 和 Unban（最高优先级） ───
         ban_match = BAN_PATTERN.search(line)
+        # Ban
         if ban_match:
             jail, ip = ban_match.groups()
             country = get_country_code(ip)
-            message = f"🚫 *Ban Notification* - {HOSTNAME}\nJail: {jail}\nIP: {ip} ({country})\n时间: {ts}"
+            message = (
+                f"🚫 *Ban Notification* - {HOSTNAME}\n"
+                f"Jail: {jail}\n"
+                f"IP: `{ip}` ({country})\n"   # ← 这里加反引号
+                f"时间: {ts}"
+            )
             print("MATCH BAN → Sending:", message)
             send_telegram_message(message)
             continue
 
+        # Unban
         unban_match = UNBAN_PATTERN.search(line)
+        
         if unban_match:
             jail, ip = unban_match.groups()
             country = get_country_code(ip)
-            message = f"✅ *Unban Notification* - {HOSTNAME}\nJail: {jail}\nIP: {ip} ({country})\n时间: {ts}"
+            message = (
+                f"✅ *Unban Notification* - {HOSTNAME}\n"
+                f"Jail: {jail}\n"
+                f"IP: `{ip}` ({country})\n"   # ← 这里加反引号
+                f"时间: {ts}"
+            )
             print("MATCH UNBAN → Sending:", message)
             send_telegram_message(message)
             continue
