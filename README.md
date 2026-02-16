@@ -4,7 +4,13 @@ Fail2ban notify 基于 [fail2ban](https://github.com/fail2ban/fail2ban) 项目�
 
 特点：运行一个独立服务，监控 fail2ban 日志判断封禁情况，不需要修改 'jail.local' ，与 fail2ban 服务完全隔离，即使通知程序出现问题，也不会影响 fail2ban 封IP操作
 
-支持通知 `服务启动` `服务停止` `IP封禁` `IP解封` 以及 `重启后恢复封禁IP的数量`
+支持通知 `服务启动` `服务停止` `IP封禁` `IP解封` 以及 `重启后恢复封禁IP的汇总`
+
+> 如果你重启 Fail2ban 服务，那么脚本会连续单独发送每个 ip 解封的通知
+>  
+> 但是并不会连续单独发送每个 ip Restore ban
+>  
+> 汇总IP restore ban会有通知延迟
 
 查询 api 获取 IP 归属地
 
@@ -14,7 +20,7 @@ Fail2ban notify 基于 [fail2ban](https://github.com/fail2ban/fail2ban) 项目�
 cd /etc/systemd/system/
 wget https://raw.githubusercontent.com/Zhengyscla/fail2_telegram/refs/heads/main/fail2ban-notify.service
 cd /usr/local/bin/
-wget https://raw.githubusercontent.com/Zhengyscla/fail2_telegram/refs/heads/main/fail2ban-telegram-notify.sh
+wget https://raw.githubusercontent.com/Zhengyscla/fail2_telegram/refs/heads/main/tele_fail2_notify.py
 ```
 
 ## 写入配置
@@ -29,11 +35,11 @@ wget https://raw.githubusercontent.com/Zhengyscla/fail2_telegram/refs/heads/main
 
 然后打开 [GetUserID](https://t.me/userinfobot) ，直接开始就可以看到你的 Chat ID ，手动复制`ID`后面的数字
 
-打开 `fail2ban-telegram-notify.sh` 修改以下变量
+打开 `tele_fail2_notify.py` 修改以下变量
 
 ```
-TELEGRAM_TOKEN="你的Telegram Bot Token"
-CHAT_ID="你的Telegram Chat ID"
+TELEGRAM_BOT_TOKEN = '你的 Token'  # e.g., '123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11'
+TELEGRAM_CHAT_ID = '你的 Chat ID'     # e.g., '123456789' or '@channelname'
 ```
 
 退出并保存
@@ -48,7 +54,7 @@ systemctl staatus fail2ban-notify.service  # 验证服务正常运行
 
 效果图：
 
-<img width="446" height="366" alt="image" src="https://github.com/user-attachments/assets/edfa2ff5-a557-47dc-a00b-f41c7ba94c19" />
+<img width="384" height="89" alt="image" src="https://github.com/user-attachments/assets/94a3bb83-3005-4cd7-ade6-0836abf6ecf8" />
 
 
 # 项目佛系维护，不接受 issus 以及 bug 反馈。项目若有问题，自行解决
